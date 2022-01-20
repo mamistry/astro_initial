@@ -1,0 +1,28 @@
+---
+import Header from '../components/Header.tsx';
+// src/layouts/BaseLayout.astro
+const {title} = Astro.props;
+---
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
+    <title>Example Layout: {title}</title>
+
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <style global>
+      @import "../styles/global.css";
+      @import "../styles/home.css";
+    </style>
+    
+  </head>
+  <body>
+    <!-- Add a header to every page. -->
+    <Header client:only />
+    <!-- slot: your page content will be injected here. -->
+    <slot />
+    <!-- Add a footer to every page. -->
+  </body>
+</html>

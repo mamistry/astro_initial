@@ -1,0 +1,85 @@
+---
+// Component Imports
+import BaseLayout from '../layouts/BaseLayout.astro'
+import ResponsiveDrawer from '../components/Nav.tsx';
+import MediaCard from '../components/MediaCard.tsx';
+// You can import components from any supported Framework here!
+
+//const characters = await fetch('https://finalspaceapi.com/api/v0/character?limit=5').then(response => response.json());
+
+const clips = await fetch('https://sports-federated-api-gw.int.nonprod.wmsports.io/graphql', {
+  method: 'POST',
+  headers: {
+    "Content-Type": "application/json",
+		"authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwczovL2FwaS9ncmFwaHFsIjp7InJvbGVzIjpbImRpcmVjdG9yIl0sInBlcm1pc3Npb25zIjpbInJlYWQ6YW55X3VzZXIiLCJyZWFkOm93bl91c2VyIl19LCJpYXQiOjE2NDI0NzgyNTUsImV4cCI6MTY1MDI1NDI1NSwic3ViIjoiMTIzNDUifQ.Bj069QIFA1h0szu_BSdHOHfeQcsiy3B1k4mQSKdaHYM",
+		"app_version": "0.1.0",
+		"language": "en-US",
+		"origin": "https://estadio-tnt-sports-web.int.nonprod.wmsports.io"
+  },
+
+  body: JSON.stringify({
+    query: `query Page (
+			$uri: String
+			$tenant: Tenant!
+		){
+			getPageByUri(uri: $uri, tenant: $tenant) {
+								title
+								created
+								type
+								components {
+										type
+										content {
+												allowedTypes
+												weight
+											clips {
+												_id
+												title
+												headline
+												thumbnail
+												uuid
+												cmsId
+												mediaId
+											}
+											events {
+												id
+												title
+												is_live
+												medium_vod
+												has_media
+												sportradar_id
+												media_asset_id_vod
+												media_asset_id_live
+											}
+										}
+								}
+						}
+		}`,
+		variables: { tenant: "estadioChile", uri: "/es/home" }
+})})
+.then(res => res.json())
+.then(res => res.data.getPageByUri.components[3].content[0].clips)
+
+// Component Script:
+// You can write any JavaScript/TypeScript that you'd like here.
+// It will run during the build, but never in the browser.
+// All variables are available to use in the HTML template below.
+let title = 'My Astro Site';
+
+// Full Astro Component Syntax:
+// https://docs.astro.build/core-concepts/astro-components/
+---
+<BaseLayout title={title}>
+		<ResponsiveDrawer client:only clips={clips} />
+
+		<!--
+
+		You can also use imported framework components directly in your markup!
+		
+		Note: by default, these components are NOT interactive on the client.
+		The `:visible` directive tells Astro to make it interactive.
+		
+		See https://docs.astro.build/core-concepts/component-hydration/ 
+
+		-->
+
+</BaseLayout>
